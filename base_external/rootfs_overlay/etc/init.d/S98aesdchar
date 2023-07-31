@@ -6,7 +6,7 @@
 
 case "$1" in
     start)
-	echo "Loading scull driver"
+	echo "Loading aesdchar driver"
 	modprobe aesdchar
 
 	# retrieve major number
@@ -14,7 +14,6 @@ case "$1" in
 	echo "aesdchar major number $major"
 
 	# Remove stale nodes and replace them, then give gid and perms
-	# Usually the script is shorter, it's scull that has several devices in it.
 	rm -f /dev/aesdchar
 	mknod /dev/aesdchar c $major 0
 	chgrp staff /dev/aesdchar
