@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# Start/stop script for aesdchar driver
+# Thomas Ames, ECEA 5305, Assignment 8, July 2023
+# Based on S98lddmodules and aesdchar_load/aesdchar_unload
+
+case "$1" in
+    start)
+	echo "Loading scull driver"
+	modprobe aesdchar
+
+	# retrieve major number
+	major=$(awk "\$2==\"aesdchar\" {print \$1}" /proc/devices)
+	echo "aesdchar major number $major"
+
+	# Remove stale nodes and replace them, then give gid and perms
+	# Usually the script is shorter, it's scull that has several devices in it.
+	rm -f /dev/aesdchar
+	mknod /dev/aesdchar c $major 0
+	chgrp staff /dev/aesdchar
+	chmod 664 /dev/aesdchar
+	;;
+    stop)
+	echo "Unloading aesdchar driver"
+	rmmod aesdchar
+
+	# Remove stale nodes
+	rm -f /dev/aesdchar
+	;;
+    *)
+	echo "Usage: $0 {start|stop}"
+	exit 1
+esac
+
+exit 0
